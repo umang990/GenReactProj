@@ -4,7 +4,7 @@ import Header from "./components/header";
 import PromptInput from "./components/promptinput/promptInput";
 import CodeOutput from "./components/codeOutput";
 import LivePreview from "./components/livePreview";
-import FloatingChat from "./components/FloatingChat";
+import FloatingChat from "./components/floatingchat"
 
 export default function App() {
   const [prompt, setPrompt] = useState("");
