@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { Copy, Code, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 import SparkleLoader from "./sparkleloader";
@@ -9,14 +9,15 @@ export default function CodeOutput({
   codeOutput,
   copyToClipboard,
   loading,
+  expanded,
+  setExpanded
 }) {
-  const [expanded, setExpanded] = useState(false);
   const contentRef = useRef(null);
-  const [contentHeight, setContentHeight] = useState(0);
+  const contentHeight = contentRef.current?.scrollHeight || 0;
 
   useEffect(() => {
     if (contentRef.current) {
-      setContentHeight(contentRef.current.scrollHeight);
+      contentRef.current.scrollTop = contentRef.current.scrollHeight;
     }
   }, [codeOutput, loading]);
 
@@ -38,9 +39,7 @@ export default function CodeOutput({
               <button
                 key={model}
                 onClick={() => setSelectedModel(model)}
-                className={`w-1/2 h-full flex items-center justify-center transition-colors duration-200 ${
-                  isActive ? "text-white" : "text-gray-800"
-                }`}
+                className={`w-1/2 h-full flex items-center justify-center transition-colors duration-200 ${isActive ? "text-white" : "text-gray-800"}`}
               >
                 {model}
               </button>
@@ -51,7 +50,7 @@ export default function CodeOutput({
 
       {/* Output Box */}
       <div className="relative z-10 rounded-3xl bg-white/60 backdrop-blur-xl shadow-xl ring-1 ring-white/30 px-8 py-6 overflow-hidden">
-        {/* Glow background */}
+        {/* Glow Background */}
         <div className="absolute -top-16 -left-16 w-72 h-72 bg-gradient-to-br from-indigo-500 via-pink-400 to-yellow-400 opacity-30 blur-[90px] rounded-full z-0" />
         <div className="absolute -bottom-16 -right-16 w-72 h-72 bg-gradient-to-br from-yellow-400 via-pink-400 to-indigo-500 opacity-30 blur-[90px] rounded-full z-0" />
 
@@ -63,17 +62,14 @@ export default function CodeOutput({
           <h2 className="text-xl font-semibold text-gray-900">Code Output</h2>
         </div>
 
-        {/* Top Expand Button + Copy */}
+        {/* Top Buttons */}
         <div className="absolute top-6 right-6 flex gap-3 z-20">
           <button
             onClick={toggleExpand}
             className="text-pink-400 hover:text-pink-600"
             title={expanded ? "Collapse" : "Expand"}
           >
-            <motion.div
-              animate={{ rotate: expanded ? 180 : 0 }}
-              transition={{ duration: 0.3 }}
-            >
+            <motion.div animate={{ rotate: expanded ? 180 : 0 }} transition={{ duration: 0.3 }}>
               <ChevronDown size={18} />
             </motion.div>
           </button>
@@ -88,7 +84,7 @@ export default function CodeOutput({
 
         {/* Expandable Content */}
         <motion.div
-          animate={{ maxHeight: expanded ? contentHeight + 40 : 120 }}
+          animate={{ maxHeight: expanded ? contentHeight + 60 : 120 }}
           transition={{ duration: 0.4, ease: "easeInOut" }}
           className="overflow-hidden relative z-10 bg-white/70 rounded-xl shadow-inner px-4 py-2"
         >
@@ -106,17 +102,14 @@ export default function CodeOutput({
           </pre>
         </motion.div>
 
-        {/* Bottom Chevron */}
+        {/* Bottom Expand Button */}
         <div className="flex justify-end pt-2 relative z-10">
           <button
             onClick={toggleExpand}
             className="text-pink-400 hover:text-pink-600 transition-transform"
             title={expanded ? "Collapse" : "Expand"}
           >
-            <motion.div
-              animate={{ rotate: expanded ? 180 : 0 }}
-              transition={{ duration: 0.3 }}
-            >
+            <motion.div animate={{ rotate: expanded ? 180 : 0 }} transition={{ duration: 0.3 }}>
               <ChevronDown size={18} />
             </motion.div>
           </button>

@@ -1,21 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ChatContainer from "./chatcontainer";
 import PromptInput from "./promptinput/promptInput";
 import { MessageCircle } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
-export default function FloatingChat({ messages, loading, prompt, setPrompt, sendPromptToAPI }) {
+export default function FloatingChat({
+  messages,
+  loading,
+  prompt,
+  setPrompt,
+  sendPromptToAPI,
+}) {
   const [open, setOpen] = useState(false);
+  const [bubbleLeft, setBubbleLeft] = useState("calc(50% - 280px)");
+
+  useEffect(() => {
+    const anchor = document.getElementById("prompt-input-anchor");
+    if (anchor) {
+      const rect = anchor.getBoundingClientRect();
+      setBubbleLeft(`${rect.left - 60}px`);
+    }
+  }, []);
 
   return (
-    <div className="relative">
+    <>
       {/* Chat Bubble Button */}
-      <button
-        onClick={() => setOpen(true)}
-        className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 bg-gradient-to-br from-pink-400 via-yellow-300 to-indigo-400 text-white p-3 rounded-full shadow-lg hover:scale-105 transition-all duration-300"
-      >
-        <MessageCircle size={22} />
-      </button>
+      {!open && (
+        <button
+          onClick={() => setOpen(true)}
+          className="fixed bottom-70 z-50 bg-gradient-to-br from-pink-400 via-yellow-300 to-indigo-400 text-white p-3 rounded-full shadow-lg hover:scale-105 transition-all duration-300"
+          style={{ left: bubbleLeft }}
+        >
+          <MessageCircle size={22} />
+        </button>
+      )}
 
       {/* Full Chat UI when open */}
       <AnimatePresence>
@@ -30,13 +48,13 @@ export default function FloatingChat({ messages, loading, prompt, setPrompt, sen
               onClick={() => setOpen(false)}
             />
 
-            {/* Chat Panel */}
+            {/* Chat Panel with enhanced animation */}
             <motion.div
-              initial={{ scale: 0.6, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.6, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 200, damping: 15 }}
-              className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-lg bg-white/60 backdrop-blur-lg shadow-xl rounded-2xl p-4"
+              initial={{ opacity: 0, y: 50, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 50, scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="fixed bottom-24 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-lg bg-white/60 backdrop-blur-lg shadow-xl rounded-2xl p-4"
             >
               <div className="max-h-[400px] overflow-y-auto">
                 <ChatContainer messages={messages} loading={loading} />
@@ -53,6 +71,6 @@ export default function FloatingChat({ messages, loading, prompt, setPrompt, sen
           </>
         )}
       </AnimatePresence>
-    </div>
+    </>
   );
 }

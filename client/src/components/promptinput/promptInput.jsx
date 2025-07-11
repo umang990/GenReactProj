@@ -3,7 +3,7 @@ import { ArrowUpRight, Sparkles } from "lucide-react";
 
 export default function PromptInput({ prompt, setPrompt, sendPromptToAPI, loading }) {
   return (
-    <div className="relative z-10 w-full">
+    <div  id="prompt-input-anchor" className="relative z-10 w-full">
       <div className="rounded-full bg-white/60 backdrop-blur-xl shadow-lg border border-white/30 transition overflow-hidden flex items-center">
         <input
           type="text"

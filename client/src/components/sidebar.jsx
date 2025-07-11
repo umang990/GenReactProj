@@ -43,7 +43,7 @@ const Sidebar = ({ expanded, setExpanded }) => {
       onMouseLeave={handleMouseLeave}
       animate={{ width: shouldExpand ? 256 : 64 }}
       transition={{ type: "spring", stiffness: 260, damping: 20 }}
-      className="fixed top-0 left-0 h-screen z-[100] bg-white/60 backdrop-blur-xl shadow-xl border-r border-white/30 flex flex-col justify-between overflow-hidden"
+      className="fixed top-0 left-0 h-screen z-[100] bg-white/60 backdrop-blur-xl shadow-xl border-r border-white/30 flex flex-col justify-between overflow-hidden sidebar-blur-target"
     >
       {/* Top Section */}
       <div>
