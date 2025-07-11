@@ -10,18 +10,43 @@ console.log("🔑 Gemini key loaded:", process.env.GEMINI_API_KEY ? "✅ Yes" : 
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use(cors());
+// ✅ CORS setup to allow frontend
+const allowedOrigins = [
+  "https://genreactproj-1.onrender.com", // your frontend
+  "http://localhost:5173"                // local dev (optional)
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("❌ Not allowed by CORS: " + origin));
+    }
+  },
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type"]
+}));
+
 app.use(express.json());
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
+// ✅ Optional: simple health route
+app.get("/health", (req, res) => {
+  res.send("✅ Backend is up and running!");
+});
 
 app.post("/api/chat", async (req, res) => {
   const prompt = req.body.prompt?.trim();
   if (!prompt) return res.status(400).json({ error: "Prompt required" });
 
+  console.log("💬 Received prompt:", prompt);
+
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-pro", // Pro model supports structured JSON output :contentReference[oaicite:1]{index=1}
+      model: "gemini-2.5-pro",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -35,15 +60,15 @@ app.post("/api/chat", async (req, res) => {
       }
     });
 
-    let text = response.text.trim();
+    let text = response.text?.trim();
 
     let code;
     try {
       const parsed = JSON.parse(text);
       code = parsed.code;
     } catch {
-      // Fallback: extract code from Markdown fences
-      const match = text.match(/```[a-zA-Z]*\n([\s\S]*?)```/);
+      // Fallback: extract code from markdown
+      const match = text.match(/```[a-zA-Z-]*\n([\s\S]*?)```/);
       code = match ? match[1].trim() : text;
     }
 
