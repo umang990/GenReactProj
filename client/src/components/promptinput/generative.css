@@ -1,0 +1,18 @@
+@keyframes pulse-rotate {
+  0% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.25) rotate(180deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+    opacity: 1;
+  }
+}
+
+.animate-generative {
+  animation: pulse-rotate 1.4s ease-in-out infinite;
+}
