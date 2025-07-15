@@ -24,7 +24,9 @@ export default function Header() {
     return () => document.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  const toggleSidebar = () => setSidebarVisible((prev) => !prev);
+  const handleClick = () => {
+    setSidebarVisible(true); // manual expand on click
+  };
 
   return (
     <>
@@ -42,14 +44,15 @@ export default function Header() {
       </AnimatePresence>
 
       <header className="w-full sticky top-0 z-50 flex items-center bg-white/60 backdrop-blur-md shadow-md">
-        {/* Trigger area for sidebar */}
-        <div ref={triggerRef} className="relative z-50">
-          <div
-            className="p-3 cursor-pointer bg-gradient-to-br from-purple-500 via-pink-400 to-yellow-400 shadow-md rounded-tr-xl rounded-br-xl"
-            onClick={toggleSidebar}
-          >
+        <div
+          ref={triggerRef}
+          onClick={handleClick}
+          className="relative z-50"
+        >
+          <div className="p-3 cursor-pointer bg-gradient-to-br from-purple-500 via-pink-400 to-yellow-400 shadow-md rounded-tr-xl rounded-br-xl">
             <Menu className="text-white font-bold text-xl" />
           </div>
+
           <Sidebar
             expanded={sidebarVisible}
             setExpanded={setSidebarVisible}
@@ -57,7 +60,6 @@ export default function Header() {
           />
         </div>
 
-        {/* Header text */}
         <div className="flex-1 px-4 py-4">
           <h1 className="text-2xl font-semibold tracking-tight text-gray-800">
             ReactGen Compare
