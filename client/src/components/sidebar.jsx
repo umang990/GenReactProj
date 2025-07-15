@@ -1,17 +1,14 @@
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import {
-  Menu,
   Settings,
   User,
   MessageSquarePlus,
   Search,
+  Menu,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const Sidebar = ({ expanded, setExpanded }) => {
-  const [hovering, setHovering] = useState(false);
-  const hoverTimer = useRef(null);
-
+const Sidebar = ({ expanded, setExpanded, sidebarRef }) => {
   const chats = [
     "First React Component",
     "Gemini Example",
@@ -20,37 +17,19 @@ const Sidebar = ({ expanded, setExpanded }) => {
     "UI Cards",
   ];
 
-  const shouldExpand = hovering || expanded;
-
-  const handleMouseEnter = () => {
-    hoverTimer.current = setTimeout(() => {
-      setHovering(true);
-    }, 300);
-  };
-
-  const handleMouseLeave = () => {
-    clearTimeout(hoverTimer.current);
-    setHovering(false);
-  };
-
-  useEffect(() => {
-    return () => clearTimeout(hoverTimer.current);
-  }, []);
-
   return (
     <motion.div
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      animate={{ width: shouldExpand ? 256 : 64 }}
+      ref={sidebarRef}
+      animate={{ width: expanded ? 256 : 0, opacity: expanded ? 1 : 0 }}
+      initial={{ width: 0, opacity: 0 }}
       transition={{ type: "spring", stiffness: 260, damping: 20 }}
-      className="fixed top-0 left-0 h-screen z-[100] bg-white/60 backdrop-blur-xl shadow-xl border-r border-white/30 flex flex-col justify-between overflow-hidden sidebar-blur-target"
+      className="fixed top-0 left-0 h-screen z-40 bg-white/100 backdrop-blur-xl shadow-xl border-r border-white/30 flex flex-col justify-between overflow-hidden"
     >
       {/* Top Section */}
       <div>
-        <div className="flex items-center gap-3 p-4 border-b border-white/20">
-          <Menu className="text-gray-600" />
+        <div className="flex items-center justify-between p-4 border-b border-white/20">
           <AnimatePresence>
-            {shouldExpand && (
+            {expanded && (
               <motion.span
                 className="text-lg font-semibold text-gray-800"
                 initial={{ opacity: 0, x: -10 }}
@@ -62,14 +41,21 @@ const Sidebar = ({ expanded, setExpanded }) => {
               </motion.span>
             )}
           </AnimatePresence>
+
+          {/* Menu Icon to collapse */}
+          <button
+            onClick={() => setExpanded(false)}
+            className="p-1 rounded hover:bg-white/40 transition"
+          >
+            <Menu size={20} className="text-gray-600" />
+          </button>
         </div>
 
         <div className="p-2 flex flex-col gap-6 mt-2">
-          {/* New Chat */}
           <button className="flex items-center gap-3 w-full text-left py-2 px-3 rounded-md text-pink-500 hover:bg-pink-100/30 transition">
             <MessageSquarePlus size={18} />
             <AnimatePresence>
-              {shouldExpand && (
+              {expanded && (
                 <motion.span
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -84,13 +70,12 @@ const Sidebar = ({ expanded, setExpanded }) => {
 
           {/* Search + Chat List */}
           <div className="flex flex-col gap-6">
-            {/* Search */}
             <div className="relative">
               <div className="absolute left-3 top-1/2 -translate-y-1/2 text-pink-400">
                 <Search size={16} />
               </div>
               <AnimatePresence>
-                {shouldExpand && (
+                {expanded && (
                   <motion.input
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -104,7 +89,6 @@ const Sidebar = ({ expanded, setExpanded }) => {
               </AnimatePresence>
             </div>
 
-            {/* Chat List */}
             <div className="space-y-2">
               {chats.map((chat, i) => (
                 <button
@@ -113,7 +97,7 @@ const Sidebar = ({ expanded, setExpanded }) => {
                 >
                   <div className="w-2 h-2 rounded-full bg-pink-300/80" />
                   <AnimatePresence>
-                    {shouldExpand && (
+                    {expanded && (
                       <motion.span
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -136,7 +120,7 @@ const Sidebar = ({ expanded, setExpanded }) => {
         <button className="flex items-center gap-3 w-full text-left px-3 py-2 rounded-md hover:bg-pink-100/30 text-gray-700 transition">
           <Settings size={18} className="text-pink-400" />
           <AnimatePresence>
-            {shouldExpand && (
+            {expanded && (
               <motion.span
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -151,7 +135,7 @@ const Sidebar = ({ expanded, setExpanded }) => {
         <button className="flex items-center gap-3 w-full text-left px-3 py-2 rounded-md hover:bg-pink-100/30 text-gray-700 transition">
           <User size={18} className="text-pink-400" />
           <AnimatePresence>
-            {shouldExpand && (
+            {expanded && (
               <motion.span
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}

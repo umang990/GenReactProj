@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import Sidebar from "./components/sidebar";
 import Header from "./components/header";
 import PromptInput from "./components/promptinput/promptInput";
 import CodeOutput from "./components/codeOutput";
@@ -9,7 +8,6 @@ import FloatingChat from "./components/floatingchat";
 export default function App() {
   const [prompt, setPrompt] = useState("");
   const [selectedModel, setSelectedModel] = useState("chatgpt");
-  const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [codeOutput, setCodeOutput] = useState("");
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -56,7 +54,6 @@ export default function App() {
 
   const copyToClipboard = () => navigator.clipboard.writeText(codeOutput);
 
-  // Ref for positioning the floating prompt input
   const outputContainerRef = useRef(null);
   const [promptBoxWidth, setPromptBoxWidth] = useState(0);
   const [promptBoxLeft, setPromptBoxLeft] = useState(0);
@@ -71,60 +68,49 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-gray-200 via-gray-100 to-white text-gray-900 font-inter">
-      <Sidebar expanded={sidebarExpanded} setExpanded={setSidebarExpanded} />
+      <Header />
 
-      <div className="pl-16 transition-all duration-300">
-        <Header />
-
-        <main className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 px-4 py-10">
-          <div className="flex flex-col space-y-4 relative">
-            {/* Main CodeOutput Container */}
-            <div ref={outputContainerRef}>
-              <CodeOutput
-                selectedModel={selectedModel}
-                setSelectedModel={setSelectedModel}
-                codeOutput={codeOutput}
-                copyToClipboard={copyToClipboard}
-                loading={loading}
-                expanded={expanded}
-                setExpanded={setExpanded}
-              />
-            </div>
-
-            {/* Normal Prompt Input when not expanded */}
-            {!expanded && (
-              <PromptInput
-                prompt={prompt}
-                setPrompt={setPrompt}
-                sendPromptToAPI={sendPromptToAPI}
-                loading={loading}
-              />
-            )}
-
-            {/* Floating Chat */}
-            <FloatingChat
-              messages={messages}
+      <main className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 px-4 py-10">
+        <div className="flex flex-col space-y-4 relative">
+          <div ref={outputContainerRef}>
+            <CodeOutput
+              selectedModel={selectedModel}
+              setSelectedModel={setSelectedModel}
+              codeOutput={codeOutput}
+              copyToClipboard={copyToClipboard}
               loading={loading}
-              prompt={prompt}
-              setPrompt={setPrompt}
-              sendPromptToAPI={sendPromptToAPI}
+              expanded={expanded}
+              setExpanded={setExpanded}
             />
           </div>
 
-          <div className="sticky top-24 h-fit">
-            <LivePreview code={codeOutput} />
-          </div>
-        </main>
-      </div>
+          {!expanded && (
+            <PromptInput
+              prompt={prompt}
+              setPrompt={setPrompt}
+              sendPromptToAPI={sendPromptToAPI}
+              loading={loading}
+            />
+          )}
 
-      {/* Floating Prompt Input at screen bottom when expanded */}
+          <FloatingChat
+            messages={messages}
+            loading={loading}
+            prompt={prompt}
+            setPrompt={setPrompt}
+            sendPromptToAPI={sendPromptToAPI}
+          />
+        </div>
+
+        <div className="sticky top-24 h-fit">
+          <LivePreview code={codeOutput} />
+        </div>
+      </main>
+
       {expanded && (
         <div
           className="fixed bottom-4 z-50 transition-all duration-300"
-          style={{
-            width: promptBoxWidth,
-            left: promptBoxLeft,
-          }}
+          style={{ width: promptBoxWidth, left: promptBoxLeft }}
         >
           <PromptInput
             prompt={prompt}
